@@ -89,7 +89,7 @@ These are the components of our Web Application:
 * Web framework:            Spring-Boot enabled Spring-WebMVC, Spring-Data-Rest
 * Persistence Access:       Spring-Data-Neo4j 5.0.5
 * Database:                 Neo4j-Server 3.3.x
-* Frontend:                 jquery, bootstrap, http://d3js.org/[d3.js]
+* Frontend:                 react, bootstrap, https://antv.alipay.com/zh-cn/g6/1.x/index.html/[AntV-G6]
 
 == Endpoints:
 
