@@ -11,22 +11,38 @@ import {
 } from 'd3';
 import PropTypes from 'prop-types';
 
-const NODE_COLOR_MAP = {
-  'actor': '#888',
-  'watch': '#BBB'
-};
-
 const Mapper = G6.Plugins['tool.d3.mapper'];
 
 export default class Graph extends React.Component {
   static propTypes = {
-    data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    id: PropTypes.string.isRequired,
+    data: PropTypes.arrayOf(PropTypes.objectOf({
+      nodes: PropTypes.object,
+      edges: PropTypes.object
+    })).isRequired,
+    nodeLabelKey: PropTypes.string.isRequired,
+    nodeDegreeKey: PropTypes.bool.isRequired,
+    nodeDegreeRange: PropTypes.arrayOf(PropTypes.number).isRequired,
+    nodeColorRange: PropTypes.arrayOf(PropTypes.string),
+    nodeStyle: PropTypes.object,
+    edgeStyle: PropTypes.object,
     width: PropTypes.number,
     height: PropTypes.number,
     style: PropTypes.object
   };
 
   static defaultProps = {
+    nodeColorRange: ['#888'],
+    nodeStyle: {
+      stroke: '#222',
+      strokeWidth: '1.5px',
+      fill: '#888'
+    },
+    edgeStyle: {
+      stroke: '#999',
+      strokeOpacity: 0.6,
+      strokeWidth: '1px'
+    }, 
     width: 800,
     height: 800,
     style: null
@@ -85,15 +101,28 @@ export default class Graph extends React.Component {
   }
 
   componentDidMount() {
-    let nodeSizeMapper = new Mapper('node', 'degree', 
-      'size', [0, 10], {legendCfg: null });
-    let nodeColorMapper = new Mapper('node', 'label', 
-      'color', [NODE_COLOR_MAP['actor'], NODE_COLOR_MAP['watch']]);
+    const {
+      id,
+      data,
+      nodeLabelKey,
+      nodeDegreeKey,
+      nodeDegreeRange,
+      nodeColorRange,
+      nodeStyle,
+      edgeStyle,
+      width,
+      height
+    } = this.props;
+
+    let nodeSizeMapper = new Mapper('node', nodeDegreeKey, 
+      'size', nodeDegreeRange, {legendCfg: null });
+    let nodeColorMapper = new Mapper('node', nodeLabelKey, 
+      'color', nodeColorRange);
 
     this.graph = new G6.Graph({
-      container: 'mountNode',
-      width: this.props.width,
-      height: this.props.height,
+      container: id,
+      width: width,
+      height: height,
       plugins: [ nodeSizeMapper, nodeColorMapper ],
       modes: { default: [ 'rightPanCanvas' ]},
       layout: (nodes, edges) => {
@@ -111,31 +140,12 @@ export default class Graph extends React.Component {
       }
     });
 
-    // set node style
-    this.graph.node({
-      style: model => ({
-        stroke: '#222',
-        strokeWidth: '1.5px',
-        fill: NODE_COLOR_MAP[model.label]
-      }),
-      label: model => ({
-        text: model.title,
-        stroke: '#b3b3b3',
-        lineWidth: 2
-      })
-    });
-
-    // set edge style
-    this.graph.edge({
-      style: () => ({
-        stroke: '#999',
-        strokeOpacity: 0.6,
-        strokeWidth: '1px'
-      })
-    });
+    // set node & edge style
+    this.graph.node(nodeStyle);
+    this.graph.edge(edgeStyle);
 
     // load data
-    this.graph.read(this.props.data);
+    this.graph.read(data);
 
     // move to center
     this.graph.translate(this.graph.getWidth() / 2, this.graph.getHeight() / 2);
@@ -155,10 +165,10 @@ export default class Graph extends React.Component {
   }
 
   render() {
-    const { style } = this.props;
+    const { style, id } = this.props;
     return (
       <div>
-        <div id="mountNode" style={style} />
+        <div id={id} style={style} />
       </div>
     );
   }

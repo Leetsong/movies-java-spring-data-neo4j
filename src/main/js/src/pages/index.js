@@ -4,6 +4,11 @@ import Navigation from '@/components/index/Navigation';
 import MoviesPanel from '@/components/index/MoviesPanel';
 import Graph from '@/components/index/Graph';
 
+const NODE_COLOR_MAP = {
+  'actor': '#888',
+  'watch': '#BBB'
+};
+
 @connect(({ global }) => ({ movies: global.movies, graph: global.graph }))
 class IndexPage extends React.Component {
 
@@ -75,14 +80,39 @@ class IndexPage extends React.Component {
 
     return (
       <div>
-        { graph && <Graph style={{  
+        { graph && <Graph 
+          id="mountNode"
+          data={graph}
+          nodeLabelKey="label"
+          nodeDegreeKey="degree"
+          nodeDegreeRange={[0, 15]}
+          nodeColorRange={Object.values(NODE_COLOR_MAP)}
+          nodeStyle={{
+            style: model => ({
+              stroke: '#222',
+              strokeWidth: '1.5px',
+              fill: NODE_COLOR_MAP[model.label]
+            }),
+            label: model => ({
+              text: model.title,
+              stroke: '#b3b3b3',
+              lineWidth: 2
+            })
+          }}
+          edgeStele={{
+            style: () => ({
+              stroke: '#999',
+              strokeOpacity: 0.6,
+              strokeWidth: '1px'
+            })
+          }}
+          style={{  
             position: 'absolute',
             top: 0,
             margin: 'auto',
             height: '100%',
             width: '100%' 
-          }} 
-          data={graph}
+          }}
         /> }
         <Navigation onSearch={this.handleSearch}/>
         <MoviesPanel
@@ -90,7 +120,6 @@ class IndexPage extends React.Component {
           displayedMovieDetail={displayedMovieDetail}
           onClickMovie={this.handleClickMovie}
         />
-
     </div>
     );
   }
