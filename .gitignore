@@ -1,6 +1,11 @@
 .idea
+dist
 target
 *.iml
 *.class
 *.jar
 *.pyc
+src/main/resources/static/index.html
+src/main/resources/static/umi.css
+src/main/resources/static/umi.js
+

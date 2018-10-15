@@ -1,6 +1,7 @@
 
 // ref: https://umijs.org/config/
 export default {
+  outputPath: '../resources/static',
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html
     ['umi-plugin-react', {
