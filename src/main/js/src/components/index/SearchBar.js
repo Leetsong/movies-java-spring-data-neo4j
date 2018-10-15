@@ -1,12 +1,17 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 export default class SearchBar extends React.Component {
+
+  static propTypes = {
+    onClick: PropTypes.func.isRequired
+  };
 
   state = {
     value: 'Matrix'
   };
 
   handleChange = e => {
-    console.log('CHANGE:', e.target.value);
     this.setState({
       ...this.state,
       value: e.target.value
@@ -14,7 +19,7 @@ export default class SearchBar extends React.Component {
   };
 
   render() {
-    const { onClick } = this.props;
+    const { onClick: handleClick } = this.props;
     const { value } = this.state;
 
     return (
@@ -31,12 +36,11 @@ export default class SearchBar extends React.Component {
         </div>
         <button
           className="btn btn-default"
-          onClick={e => onClick(this.state.value)}
+          onClick={e => handleClick(this.state.value)}
         >
           Search
         </button>
       </div>
-  );
-
+    );
   }
 }

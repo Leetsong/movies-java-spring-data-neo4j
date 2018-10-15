@@ -4,7 +4,8 @@ export default {
   namespace: 'global',
 
   state: {
-    movies: []
+    movies: [],
+    graph: null
   },
 
   reducers: {
@@ -12,6 +13,25 @@ export default {
       return {
         ...state,
         movies
+      };
+    },
+    'save-graph' (state, { payload: graph }) {
+      const nodes = graph.nodes.map((n, i)=> ({
+        ...n,
+        id: `node-${i}`,
+        degree: 1
+      }));
+      const edges = graph.links.map((e, i) => ({
+        id: `edge-${i}`,
+        source: nodes[e.source].id,
+        target: nodes[e.target].id
+      }));
+      return {
+        ...state,
+        graph: {
+          nodes,
+          edges
+        }
       };
     }
   },
@@ -40,6 +60,15 @@ export default {
         return result;
       } else {
         return null;
+      }
+    },
+    *'fetch-graph' (_, { call, put }) {
+      const result = yield call(service.fetchGraph);
+      if (result !== null) {
+        yield put({
+          type: 'save-graph',
+          payload: result
+        });
       }
     }
   },

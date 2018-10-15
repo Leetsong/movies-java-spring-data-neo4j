@@ -2,8 +2,9 @@ import React from 'react';
 import { connect } from 'dva';
 import Navigation from '@/components/index/Navigation';
 import MoviesPanel from '@/components/index/MoviesPanel';
+import Graph from '@/components/index/Graph';
 
-@connect(({ global }) => ({ movies: global.movies }))
+@connect(({ global }) => ({ movies: global.movies, graph: global.graph }))
 class IndexPage extends React.Component {
 
   state = {
@@ -37,6 +38,12 @@ class IndexPage extends React.Component {
     });
   };
 
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'global/fetch-graph'
+    });
+  }
+
   fetchDisplayedMovieRolesInfo(dm) {
     dm.roles.forEach(cast => {
       this.props.dispatch({
@@ -63,19 +70,27 @@ class IndexPage extends React.Component {
   }
 
   render() {
-    const { movies } = this.props;
+    const { movies, graph } = this.props;
     const { displayedMovieDetail } = this.state;
 
     return (
       <div>
-        <div id="graph">
-        </div>
+        { graph && <Graph style={{  
+            position: 'absolute',
+            top: 0,
+            margin: 'auto',
+            height: '100%',
+            width: '100%' 
+          }} 
+          data={graph}
+        /> }
         <Navigation onSearch={this.handleSearch}/>
         <MoviesPanel
           movies={movies}
           displayedMovieDetail={displayedMovieDetail}
           onClickMovie={this.handleClickMovie}
         />
+
     </div>
     );
   }

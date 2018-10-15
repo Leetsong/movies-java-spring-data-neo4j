@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 
 const MoviesList = ({ movies, onClickMovie: handleClickMovie }) => (
   <table className="table table-striped table-hover">
@@ -10,7 +11,7 @@ const MoviesList = ({ movies, onClickMovie: handleClickMovie }) => (
     </thead>
     <tbody>
       { movies && movies.map(m =>
-        <tr key={m.title} onClick={() => handleClickMovie(m)}>
+        <tr key={m.title} onClick={() => handleClickMovie(m)} style={{ cursor: 'pointer' }}>
           <td className="movie">{ m.title }</td>
           <td>{ m.released }</td>
           <td>{ m.tagline }</td>
@@ -44,21 +45,35 @@ const MovieDetail = ({ movie, rolesInfo }) => (
   </div>
 );
 
-export default ({ movies, displayedMovieDetail, onClickMovie: handleClickMovie }) => (
-  <div className="row">
-    { movies && movies.length !== 0 && <div className="col-md-5">
-        <div className="panel panel-default">
-          <div className="panel-heading">Search Results</div>
-          <MoviesList movies={movies} onClickMovie={handleClickMovie}/>
-        </div>
-    </div> }
-    { displayedMovieDetail && displayedMovieDetail.movie && <div className="col-md-7">
-        <div className="panel panel-default">
-          <MovieDetail
-            movie={displayedMovieDetail.movie}
-            rolesInfo={displayedMovieDetail.rolesInfo}
-          />
-        </div>
+function MoviesPanel({ movies, displayedMovieDetail, onClickMovie: handleClickMovie }) {
+  return (
+    <div className="row">
+      { movies && movies.length !== 0 && <div className="col-md-5">
+          <div className="panel panel-default">
+            <div className="panel-heading">Search Results</div>
+            <MoviesList movies={movies} onClickMovie={handleClickMovie}/>
+          </div>
       </div> }
-  </div>
-);
+      { displayedMovieDetail && displayedMovieDetail.movie && <div className="col-md-7">
+          <div className="panel panel-default">
+            <MovieDetail
+              movie={displayedMovieDetail.movie}
+              rolesInfo={displayedMovieDetail.rolesInfo}
+            />
+          </div>
+        </div> }
+    </div>
+  );
+}
+
+MoviesPanel.propTypes = {
+  movies: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onClickMovie: PropTypes.func.isRequired,
+  displayedMovieDetail: PropTypes.object
+};
+
+MoviesPanel.defaultProps = {
+  displayedMovieDetail: null
+};
+
+export default MoviesPanel;

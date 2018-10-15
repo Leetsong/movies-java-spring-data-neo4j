@@ -16,3 +16,8 @@ export async function searchPerson(href) {
   const res = await request(href);
   return res.body;
 }
+
+export async function fetchGraph() {
+  const res = await request('/graph');
+  return res.body;
+}
